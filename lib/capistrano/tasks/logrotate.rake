@@ -3,7 +3,7 @@ namespace :load do
     set :logrotate_role, :app
     set :logrotate_conf_path, -> { File.join('/etc', 'logrotate.d', "#{fetch(:application)}_#{fetch(:stage)}") }
     set :logrotate_log_path, -> { File.join(shared_path, 'log') }
-    set :logrotate_logs_keep, -> { 12 }
+    set :logrotate_logs_keep, -> { 7 }
     set :logrotate_interval, -> { 'daily' }
     set :logrotate_user, -> { fetch(:user) }
     set :logrotate_group, -> { fetch(:user) }
@@ -31,6 +31,7 @@ namespace :logrotate do
       upload! StringIO.new(ERB.new(erb).result(binding)), config_path
       sudo :mv, config_path, fetch(:logrotate_conf_path)
       sudo :chown, "root:root", fetch(:logrotate_conf_path)
+      sudo :chmod, "644", fetch(:logrotate_conf_path)
     end
   end
 end
